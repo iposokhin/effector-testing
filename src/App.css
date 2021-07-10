@@ -1,0 +1,30 @@
+form {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formSection {
+  display: flex;
+}
+
+.formSection input {
+  flex-grow: 1;
+  order: 2;
+}
+
+.formSection label {
+  order: 1;
+}
+
+input[required] + label::after {
+  content: "*";
+  color: red;
+  width: 20px;
+}
+
+label {
+  width: 100px;
+  display: inline-block;
+}
