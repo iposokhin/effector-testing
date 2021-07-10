@@ -12,6 +12,8 @@
     "@types/faker": "^5.5.7",
     "@types/jest": "^26.0.24",
     "babel-jest": "^27.0.6",
+    "babel-plugin-transform-rename-import": "^2.3.0",
+    "effector-root": "^1.3.0",
     "faker": "^5.5.3",
     "jest": "^27.0.6",
     "parcel": "^2.0.0-beta.3.1"
