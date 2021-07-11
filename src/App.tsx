@@ -5,8 +5,6 @@ import React, {
   ButtonHTMLAttributes,
 } from "react";
 
-import "./App.css";
-
 import {
   changeName,
   changeAge,
@@ -18,11 +16,15 @@ import {
 } from "./model";
 
 import { useStore } from "effector-react";
+import { useEvent } from "effector-react/ssr";
+
+import "./App.css";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>;
 
 const Name: React.FC<InputProps> = (props) => {
   const name = useStore($name);
+  const change = useEvent(changeName);
 
   return (
     <div className="formSection">
@@ -30,7 +32,7 @@ const Name: React.FC<InputProps> = (props) => {
         {...props}
         required
         value={name}
-        onChange={(e) => changeName(e.target.value)}
+        onChange={(e) => change(e.target.value)}
         id="name"
         placeholder="Vasya"
       />
@@ -41,12 +43,13 @@ const Name: React.FC<InputProps> = (props) => {
 
 const Age: React.FC<InputProps> = (props) => {
   const age = useStore($age);
+  const change = useEvent(changeAge);
 
   return (
     <div className="formSection">
       <input
         {...props}
-        onChange={(e) => changeAge(+e.target.value)}
+        onChange={(e) => change(+e.target.value)}
         value={age}
         id="age"
         type="number"
@@ -68,13 +71,14 @@ const Output: React.FC<OutputProps> = (props) => {
 
 const Submit: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
   const disabled = !useStore($isValid);
+  const submitFn = useEvent(submit);
 
   return (
     <button
       {...props}
-      onClick={() => submit()}
+      onClick={() => submitFn()}
       disabled={disabled}
-      type="submit"
+      type="button"
     >
       Submit
     </button>
