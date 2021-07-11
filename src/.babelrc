@@ -23,6 +23,10 @@
               {
                 "original": "effector-react$",
                 "replacement": "effector-react/ssr"
+              },
+              {
+                "original": "@effector/reflect$",
+                "replacement": "@effector/reflect/ssr"
               }
             ]
           }
