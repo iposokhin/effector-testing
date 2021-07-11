@@ -18,7 +18,11 @@
           "transform-rename-import",
           {
             "replacements": [
-              { "original": "effector$", "replacement": "effector-root" }
+              { "original": "effector$", "replacement": "effector-root" },
+              {
+                "original": "effector-react$",
+                "replacement": "effector-react/ssr"
+              }
             ]
           }
         ],
