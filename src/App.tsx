@@ -5,6 +5,8 @@ import React, {
   ButtonHTMLAttributes,
 } from "react";
 
+import { reflect } from "@effector/reflect";
+
 import {
   changeName,
   changeAge,
@@ -14,8 +16,6 @@ import {
   $isValid,
   $output,
 } from "./model";
-
-import { reflect } from "@effector/reflect";
 
 import "./App.css";
 

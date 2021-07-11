@@ -45,7 +45,7 @@ describe("Rules point 1", () => {
     const validName = getValidName();
     const validAge = getValidAge();
 
-    const scope = fork(root, { values: { [$age.sid]: validAge } });
+    const scope = fork(root, { values: new Map().set($age, validAge) });
 
     render(
       <Provider value={scope}>
@@ -117,7 +117,7 @@ describe("Rules point 3", () => {
     const validName = getValidName();
     const validAge = getValidAge();
 
-    const scope = fork(root, { values: { [$name.sid]: validName } });
+    const scope = fork(root, { values: new Map().set($name, validName) });
 
     render(
       <Provider value={scope}>
@@ -140,7 +140,7 @@ describe("Rules point 3", () => {
     const validName = getValidName();
     const invalidAge = getInvalidAge();
 
-    const scope = fork(root, { values: { [$name.sid]: validName } });
+    const scope = fork(root, { values: new Map().set($name, validName) });
 
     render(
       <Provider value={scope}>
@@ -167,7 +167,7 @@ describe("Rules point 4", () => {
     const invalidAge = getInvalidAge();
 
     const scope = fork(root, {
-      values: { [$name.sid]: validName },
+      values: new Map().set($name, validName),
     });
 
     render(
@@ -253,7 +253,7 @@ describe("Rules point 7", () => {
     const mock = jest.fn();
 
     const scope = fork(root, {
-      handlers: { [saveFormBaseFx.sid]: mock },
+      handlers: new Map().set(saveFormBaseFx, mock),
     });
 
     render(
