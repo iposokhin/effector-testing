@@ -11,9 +11,9 @@ import {
   saveFormBaseFx,
 } from "./model";
 
-let name;
-let age;
-let save;
+let name: string;
+let age: number;
+let save: (args: any) => any;
 
 beforeAll(() => {
   name = $name.getState();
