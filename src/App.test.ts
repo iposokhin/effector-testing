@@ -4,8 +4,6 @@ import {
   $isAdult,
   $output,
   $name,
-  changeName,
-  changeAge,
   submit,
   saveFormBaseFx,
   $age,
@@ -13,32 +11,44 @@ import {
 
 import { root, fork, allSettled, hydrate } from "effector-root";
 
+const getValidName = () => {
+  const numFrom2To40 = faker.datatype.number({ min: 2, max: 40 });
+  return faker.datatype.string(numFrom2To40);
+};
+
+const getInvalidName = () => {
+  const numFrom0To1 = faker.datatype.number({ min: 0, max: 1 });
+  const randomShortName = faker.datatype.string(numFrom0To1);
+
+  const numFrom41 = faker.datatype.number({ min: 41 });
+  const randomLongName = faker.datatype.string(numFrom41);
+
+  return faker.random.arrayElement([randomShortName, randomLongName]);
+};
+
+const getValidAge = () => {
+  return faker.datatype.number({ min: 18 });
+};
+
+const getInvalidAge = () => {
+  return faker.datatype.number({ max: 17 });
+};
+
 describe("Rules point 1", () => {
   test("a name is valid when it consists of more than two chars and less than forty chars", () => {
-    const numFrom2To40 = faker.datatype.number({ min: 2, max: 40 });
-    const randomName = faker.datatype.string(numFrom2To40);
-    const scope = fork(root, { values: { [$name.sid]: randomName } });
+    const validName = getValidName();
+    const scope = fork(root, { values: { [$name.sid]: validName } });
 
     expect(scope.getState($nameHasFrom2To40Chars)).toBeTruthy();
   });
 
   test("a name is invalid when it consists of less than two chars and more than forty chars", () => {
     // Arrange
-    const numFrom0To1 = faker.datatype.number({ min: 0, max: 1 });
-    const randomShortName = faker.datatype.string(numFrom0To1);
-
-    const numFrom41 = faker.datatype.number({ min: 41 });
-    const randomLongName = faker.datatype.string(numFrom41);
-
-    const randomName = faker.random.arrayElement([
-      randomShortName,
-      randomLongName,
-    ]);
-
+    const invalidName = getInvalidName();
     const scope = fork(root);
 
     // Act
-    hydrate(scope, { values: new Map([[$name, randomName]]) });
+    hydrate(scope, { values: new Map([[$name, invalidName]]) });
 
     // Assertion
     expect(scope.getState($nameHasFrom2To40Chars)).toBeFalsy();
@@ -47,10 +57,9 @@ describe("Rules point 1", () => {
 
 describe("Rules point 2", () => {
   test("the output has validation message on invalid name", () => {
-    const numFrom41 = faker.datatype.number({ min: 41 });
-    const invalidRandomName = faker.datatype.string(numFrom41);
+    const invalidName = getInvalidName();
     const scope = fork(root, {
-      values: new Map().set($name, invalidRandomName),
+      values: new Map().set($name, invalidName),
     });
 
     expect(scope.getState($output)).toBe("Name should be from 2 to 40 chars");
@@ -59,17 +68,15 @@ describe("Rules point 2", () => {
 
 describe("Rules point 3", () => {
   test("an age is valid when user is adult", () => {
-    const numFrom18 = faker.datatype.number({ min: 18 });
-    const scope = fork(root, { values: { [$age.sid]: numFrom18 } });
+    const validAge = getValidAge();
+    const scope = fork(root, { values: { [$age.sid]: validAge } });
 
     expect(scope.getState($isAdult)).toBeTruthy();
   });
 
   test("an age is invalid when user isn't adult", () => {
-    const numLess18 = faker.datatype.number({ max: 17 });
-    const scope = fork(root, { values: new Map().set($age, numLess18) });
-
-    changeAge(numLess18);
+    const invalidAge = getInvalidAge();
+    const scope = fork(root, { values: new Map().set($age, invalidAge) });
 
     expect(scope.getState($isAdult)).toBeFalsy();
   });
@@ -78,11 +85,10 @@ describe("Rules point 3", () => {
 describe("Rules point 4", () => {
   test("the output has validation message on invalid age", () => {
     // Arrange
-    const numFrom2To40 = faker.datatype.number({ min: 2, max: 40 });
-    const validRandomName = faker.datatype.string(numFrom2To40);
-    const invalidRandomAge = faker.datatype.number({ max: 17 });
+    const validName = getValidName();
+    const invalidAge = getInvalidAge();
     const scope = fork(root, {
-      values: { [$name.sid]: validRandomName, [$age.sid]: invalidRandomAge },
+      values: { [$name.sid]: validName, [$age.sid]: invalidAge },
     });
 
     // Assertion
@@ -92,58 +98,56 @@ describe("Rules point 4", () => {
 
 describe("Rules point 5", () => {
   test("an invalid form isn't submitted to server", async () => {
+    // Arrange
+    const invalidName = getInvalidName();
+    const invalidAge = getInvalidAge();
     const mock = jest.fn();
-    const invalidRandomName = faker.datatype.string(
-      faker.datatype.number({ min: 41 })
-    );
-    const invalidRandomAge = faker.datatype.number({ max: 17 });
+
     const scope = fork(root, {
-      values: new Map()
-        .set($name, invalidRandomName)
-        .set($age, invalidRandomAge),
+      values: new Map().set($name, invalidName).set($age, invalidAge),
       handlers: { [saveFormBaseFx.sid]: mock },
     });
 
+    //Act
     await allSettled(submit, { scope });
 
+    // Assertion
     expect(mock).toBeCalledTimes(0);
   });
 });
 
 describe("Rules points 6, 8", () => {
   test("a valid form is submitted to server", async () => {
-    const validRandomName = faker.datatype.string(
-      faker.datatype.number({ min: 2, max: 40 })
-    );
-    const validRandomAge = faker.datatype.number({ min: 18 });
+    // Arrange
+    const validName = getValidName();
+    const validAge = getValidAge();
     const mock = jest.fn();
+
     const scope = fork(root, {
-      values: new Map().set($name, validRandomName).set($age, validRandomAge),
+      values: new Map().set($name, validName).set($age, validAge),
       handlers: new Map().set(saveFormBaseFx, mock),
     });
 
+    // Act
     await allSettled(submit, { scope });
 
+    // Assertion
     expect(mock).toBeCalledTimes(1);
-    expect(mock).toBeCalledWith({ name: validRandomName, age: validRandomAge });
+    expect(mock).toBeCalledWith({ name: validName, age: validAge });
   });
 });
 
 describe("Rules point 7", () => {
   test("the output has question 'Are you ${firstName}. Right?'", () => {
     const mock = jest.fn();
-    const validRandomName = faker.datatype.string(
-      faker.datatype.number({ min: 2, max: 40 })
-    );
-    const validRandomAge = faker.datatype.number({ min: 18 });
+    const validName = getValidName();
+    const validAge = getValidAge();
 
     const scope = fork(root, {
-      values: { [$name.sid]: validRandomName, [$age.sid]: validRandomAge },
+      values: { [$name.sid]: validName, [$age.sid]: validAge },
       handlers: { [saveFormBaseFx.sid]: mock },
     });
 
-    expect(scope.getState($output)).toBe(
-      "Are you " + validRandomName + "? Right?"
-    );
+    expect(scope.getState($output)).toBe("Are you " + validName + "? Right?");
   });
 });

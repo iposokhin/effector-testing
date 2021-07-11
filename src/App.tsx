@@ -74,7 +74,7 @@ const Submit: React.FC<ButtonHTMLAttributes<HTMLButtonElement>> = (props) => {
       {...props}
       onClick={() => submit()}
       disabled={disabled}
-      type="submit"
+      type="button"
     >
       Submit
     </button>
