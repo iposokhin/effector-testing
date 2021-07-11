@@ -37,7 +37,7 @@ const getInvalidAge = () => {
 describe("Rules point 1", () => {
   test("a name is valid when it consists of more than two chars and less than forty chars", () => {
     const validName = getValidName();
-    const scope = fork(root, { values: { [$name.sid]: validName } });
+    const scope = fork(root, { values: new Map().set($name, validName) });
 
     expect(scope.getState($nameHasFrom2To40Chars)).toBeTruthy();
   });
@@ -69,7 +69,7 @@ describe("Rules point 2", () => {
 describe("Rules point 3", () => {
   test("an age is valid when user is adult", () => {
     const validAge = getValidAge();
-    const scope = fork(root, { values: { [$age.sid]: validAge } });
+    const scope = fork(root, { values: new Map().set($age, validAge) });
 
     expect(scope.getState($isAdult)).toBeTruthy();
   });
@@ -88,7 +88,7 @@ describe("Rules point 4", () => {
     const validName = getValidName();
     const invalidAge = getInvalidAge();
     const scope = fork(root, {
-      values: { [$name.sid]: validName, [$age.sid]: invalidAge },
+      values: new Map().set($name, validName).set($age, invalidAge),
     });
 
     // Assertion
@@ -105,7 +105,7 @@ describe("Rules point 5", () => {
 
     const scope = fork(root, {
       values: new Map().set($name, invalidName).set($age, invalidAge),
-      handlers: { [saveFormBaseFx.sid]: mock },
+      handlers: new Map().set(saveFormBaseFx, mock),
     });
 
     //Act
@@ -144,8 +144,8 @@ describe("Rules point 7", () => {
     const validAge = getValidAge();
 
     const scope = fork(root, {
-      values: { [$name.sid]: validName, [$age.sid]: validAge },
-      handlers: { [saveFormBaseFx.sid]: mock },
+      values: new Map().set($name, validName).set($age, validAge),
+      handlers: new Map().set(saveFormBaseFx, mock),
     });
 
     expect(scope.getState($output)).toBe("Are you " + validName + "? Right?");
