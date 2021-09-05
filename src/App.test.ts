@@ -9,7 +9,7 @@ import {
   $age,
 } from "./model";
 
-import { root, fork, allSettled, hydrate } from "effector-root";
+import { fork, allSettled } from "effector";
 
 const getValidName = () => {
   const numFrom2To40 = faker.datatype.number({ min: 2, max: 40 });
@@ -37,7 +37,7 @@ const getInvalidAge = () => {
 describe("Rules point 1", () => {
   test("a name is valid when it consists of more than two chars and less than forty chars", () => {
     const validName = getValidName();
-    const scope = fork(root, { values: new Map().set($name, validName) });
+    const scope = fork({ values: new Map().set($name, validName) });
 
     expect(scope.getState($nameHasFrom2To40Chars)).toBeTruthy();
   });
@@ -45,10 +45,7 @@ describe("Rules point 1", () => {
   test("a name is invalid when it consists of less than two chars and more than forty chars", () => {
     // Arrange
     const invalidName = getInvalidName();
-    const scope = fork(root);
-
-    // Act
-    hydrate(scope, { values: new Map([[$name, invalidName]]) });
+    const scope = fork({ values: new Map([[$name, invalidName]]) });
 
     // Assertion
     expect(scope.getState($nameHasFrom2To40Chars)).toBeFalsy();
@@ -58,7 +55,7 @@ describe("Rules point 1", () => {
 describe("Rules point 2", () => {
   test("the output has validation message on invalid name", () => {
     const invalidName = getInvalidName();
-    const scope = fork(root, {
+    const scope = fork({
       values: new Map().set($name, invalidName),
     });
 
@@ -69,14 +66,14 @@ describe("Rules point 2", () => {
 describe("Rules point 3", () => {
   test("an age is valid when user is adult", () => {
     const validAge = getValidAge();
-    const scope = fork(root, { values: new Map().set($age, validAge) });
+    const scope = fork({ values: new Map().set($age, validAge) });
 
     expect(scope.getState($isAdult)).toBeTruthy();
   });
 
   test("an age is invalid when user isn't adult", () => {
     const invalidAge = getInvalidAge();
-    const scope = fork(root, { values: new Map().set($age, invalidAge) });
+    const scope = fork({ values: new Map().set($age, invalidAge) });
 
     expect(scope.getState($isAdult)).toBeFalsy();
   });
@@ -87,8 +84,11 @@ describe("Rules point 4", () => {
     // Arrange
     const validName = getValidName();
     const invalidAge = getInvalidAge();
-    const scope = fork(root, {
-      values: new Map().set($name, validName).set($age, invalidAge),
+    const scope = fork({
+      values: [
+        [$name, validName],
+        [$age, invalidAge],
+      ],
     });
 
     // Assertion
@@ -103,7 +103,7 @@ describe("Rules point 5", () => {
     const invalidAge = getInvalidAge();
     const mock = jest.fn();
 
-    const scope = fork(root, {
+    const scope = fork({
       values: new Map().set($name, invalidName).set($age, invalidAge),
       handlers: new Map().set(saveFormBaseFx, mock),
     });
@@ -123,7 +123,7 @@ describe("Rules points 6, 8", () => {
     const validAge = getValidAge();
     const mock = jest.fn();
 
-    const scope = fork(root, {
+    const scope = fork({
       values: new Map().set($name, validName).set($age, validAge),
       handlers: new Map().set(saveFormBaseFx, mock),
     });
@@ -143,7 +143,7 @@ describe("Rules point 7", () => {
     const validName = getValidName();
     const validAge = getValidAge();
 
-    const scope = fork(root, {
+    const scope = fork({
       values: new Map().set($name, validName).set($age, validAge),
       handlers: new Map().set(saveFormBaseFx, mock),
     });

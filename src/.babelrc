@@ -13,17 +13,7 @@
         ["@babel/preset-env", { "targets": { "node": "current" } }],
         "@babel/preset-typescript"
       ],
-      "plugins": [
-        [
-          "transform-rename-import",
-          {
-            "replacements": [
-              { "original": "effector$", "replacement": "effector-root" }
-            ]
-          }
-        ],
-        ["effector/babel-plugin"]
-      ]
+      "plugins": [["effector/babel-plugin"]]
     }
   }
 }

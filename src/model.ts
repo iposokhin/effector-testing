@@ -57,7 +57,7 @@ export const saveFormBaseFx = createEffect<Params, Response>({
   },
 });
 
-const saveFormFx = attach({ effect: saveFormBaseFx });
+export const saveFormFx = attach({ effect: saveFormBaseFx });
 
 // Connections
 guard({
