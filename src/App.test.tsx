@@ -6,7 +6,7 @@ import "@testing-library/jest-dom";
 
 import App from "./App";
 
-import { root, fork } from "effector-root";
+import { fork } from "effector";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Provider } from "effector-react/ssr";
 
@@ -45,7 +45,7 @@ describe("Rules point 1", () => {
     const validName = getValidName();
     const validAge = getValidAge();
 
-    const scope = fork(root, { values: new Map().set($age, validAge) });
+    const scope = fork({ values: new Map().set($age, validAge) });
 
     render(
       <Provider value={scope}>
@@ -67,7 +67,7 @@ describe("Rules point 1", () => {
     // Arrange
     const invalidName = getInvalidName();
 
-    const scope = fork(root);
+    const scope = fork();
 
     render(
       <Provider value={scope}>
@@ -91,7 +91,7 @@ describe("Rules point 2", () => {
     // Arrange
     const invalidName = getInvalidName();
 
-    const scope = fork(root);
+    const scope = fork();
 
     render(
       <Provider value={scope}>
@@ -117,7 +117,7 @@ describe("Rules point 3", () => {
     const validName = getValidName();
     const validAge = getValidAge();
 
-    const scope = fork(root, { values: new Map().set($name, validName) });
+    const scope = fork({ values: new Map().set($name, validName) });
 
     render(
       <Provider value={scope}>
@@ -140,7 +140,7 @@ describe("Rules point 3", () => {
     const validName = getValidName();
     const invalidAge = getInvalidAge();
 
-    const scope = fork(root, { values: new Map().set($name, validName) });
+    const scope = fork({ values: new Map().set($name, validName) });
 
     render(
       <Provider value={scope}>
@@ -166,7 +166,7 @@ describe("Rules point 4", () => {
 
     const invalidAge = getInvalidAge();
 
-    const scope = fork(root, {
+    const scope = fork({
       values: new Map().set($name, validName),
     });
 
@@ -194,7 +194,7 @@ describe("Rules point 5", () => {
     const invalidName = getInvalidName();
     const invalidAge = getInvalidAge();
 
-    const scope = fork(root);
+    const scope = fork();
 
     render(
       <Provider value={scope}>
@@ -222,7 +222,7 @@ describe("Rules points 6, 8", () => {
     const validAge = getValidAge();
     const mock = jest.fn();
 
-    const scope = fork(root, {
+    const scope = fork({
       values: new Map().set($name, validName).set($age, validAge),
       handlers: new Map().set(saveFormBaseFx, mock),
     });
@@ -252,7 +252,7 @@ describe("Rules point 7", () => {
 
     const mock = jest.fn();
 
-    const scope = fork(root, {
+    const scope = fork({
       handlers: new Map().set(saveFormBaseFx, mock),
     });
 
